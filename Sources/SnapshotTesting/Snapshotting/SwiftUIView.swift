@@ -34,7 +34,8 @@ extension Snapshotting where Value: SwiftUI.View, Format == UIImage {
     drawHierarchyInKeyWindow: Bool = false,
     precision: Float = 1,
     layout: SwiftUISnapshotLayout = .sizeThatFits,
-    traits: UITraitCollection = .init()
+    traits: UITraitCollection = .init(),
+    wait waitDuration: TimeInterval? = nil
     )
     -> Snapshotting {
       let config: ViewImageConfig
@@ -74,7 +75,8 @@ extension Snapshotting where Value: SwiftUI.View, Format == UIImage {
           drawHierarchyInKeyWindow: drawHierarchyInKeyWindow,
           traits: traits,
           view: controller.view,
-          viewController: controller
+          viewController: controller,
+          wait: waitDuration
         )
       }
   }

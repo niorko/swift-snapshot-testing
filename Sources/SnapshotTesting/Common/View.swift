@@ -1,4 +1,5 @@
 #if os(iOS) || os(macOS) || os(tvOS)
+import XCTest
 #if os(macOS)
 import Cocoa
 #endif
@@ -720,7 +721,8 @@ func snapshotView(
   drawHierarchyInKeyWindow: Bool,
   traits: UITraitCollection,
   view: UIView,
-  viewController: UIViewController
+  viewController: UIViewController,
+  wait waitDuration: TimeInterval?
   )
   -> Async<UIImage> {
     let initialFrame = view.frame
@@ -731,6 +733,16 @@ func snapshotView(
       view: view,
       viewController: viewController
     )
+    
+    // Wait for view to prepare it's subviews
+    if let waitDuration = waitDuration {
+      let expectation = XCTestExpectation(description: "Wait")
+      DispatchQueue.main.asyncAfter(deadline: .now() + waitDuration) {
+        expectation.fulfill()
+      }
+      _ = XCTWaiter.wait(for: [expectation], timeout: waitDuration + 1)
+    }
+    
     // NB: Avoid safe area influence.
     if config.safeArea == .zero { view.frame.origin = .init(x: offscreen, y: offscreen) }
 
